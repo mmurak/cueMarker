@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+  <head>
+    <title>Usecase 001</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+    <link rel="shortcut icon" href="./cyanKiwiBird.png">
+    <script src="./scripts/wavesurfer.js"></script>
+  </head>
+  <body bgcolor="lightgray">
+
+    <form action="#" name="Player">
+      <input type="file" id="InputFileButton" onclick="this.value=null;" disabled /><br/>
+      <input type="button" id="PlayButton" value="Play" onclick="playPause();"/>
+      <input type="button" id="Rewind1Button" value="Rewind 1 sec." onclick="rewind1second();"/>
+      <input type="button" value="Jump to (sec.):" onclick="goto();"/>
+      <input type="text" id="SecondsFromStart" size="5" value="0"/>
+      <select id="SpeedSelector" onchange="speedController(this.value);">
+        <option>0.25</option>
+        <option>0.50</option>
+        <option>0.75</option>
+        <option selected="true">1.00</option>
+        <option>1.25</option>
+        <option>1.50</option>
+        <option>1.75</option>
+        <option>2.00</option>
+      </select>
+    </form>
+
+    <div id="waveform" ></div>
+    <input id="TimerField" size="8" disabled style="text-align:right"/>
+
+    <p id="DisplayField" style="font-size: 20pt;"></p>
+
+<script src="./scripts/GlobalManagerT001.js"></script>
+<script src="./scripts/Usecase01.js"></script>
+</script>
+</body>
+</html>
