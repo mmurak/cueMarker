@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+  <head>
+    <title>Usecase 002</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+    <link rel="shortcut icon" href="./cyanKiwiBird.png">
+    <script src="./scripts/wavesurfer.js"></script>
+    <style>
+        a:link, a:visited, a:hover, a:active {
+            color: black;
+            text-decoration: none;
+        }
+    </style>
+  </head>
+  <body bgcolor="lightgray">
+
+    <form action="#" name="Player">
+      <span>設問：</span>
+      <select id="QSelector" onchange="questionSelected(this);"></select>
+      <input type="button" id="PlayButton" value="再生" onclick="playPause();"/>
+      <span>再生速度：</span>
+      <select id="SpeedSelector" onchange="speedController(this.value);">
+        <option>0.25</option>
+        <option>0.50</option>
+        <option>0.75</option>
+        <option selected="true">1.00</option>
+        <option>1.25</option>
+        <option>1.50</option>
+        <option>1.75</option>
+        <option>2.00</option>
+      </select>
+      <input type="button" id="MarkButton" value="分からんからマーク！" onclick="markThisPoint();"></input>
+    </form>
+    <br/>
+    <input type="button" id="HideShowButton" value="表示" onclick="toggleHideShow();"></input>
+
+    <div id="waveform" hidden></div>
+
+    <p id="DisplayField" style="font-size: 20pt; font-family: 'Times New Roman';" hidden></p>
+
+<script src="./data/directory.js"></script>
+<script src="./scripts/GlobalManagerT002.js"></script>
+<script src="./scripts/Usecase02.js"></script>
+</script>
+</body>
+</html>

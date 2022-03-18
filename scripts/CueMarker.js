@@ -41,7 +41,6 @@ setInterval(timer, 10);
 function playPause() {
     if (!wavesurfer.isPlaying()) {
         G.previousTimerField.value = G.timerField.value;
-        G.previousPlayButton.disabled = false;
         wavesurfer.play();
     } else {
         wavesurfer.pause();
@@ -108,6 +107,8 @@ window.addEventListener('DOMContentLoaded', function() {
                     G.transcriptField.value = reader.result;
                     G.timingList = [-1, 99999.0];
                     updateTimeMarkSelector();
+                    G.timeMarkSelector.selectedIndex = -1;
+                    G.timeMarkSelector.focus();
                 }
                 break;
             case 'json' :
@@ -117,15 +118,37 @@ window.addEventListener('DOMContentLoaded', function() {
                     let jsonData = JSON.parse(readerJSON.result);
                     G.transcriptField.value = jsonData["transcript"];
                     G.timingList = jsonData["timing"];
-                    wavesurfer.load("./" + jsonData["sound"]);
+                    wavesurfer.load("./data/" + jsonData["sound"]);
                     G.soundFileName = jsonData["sound"];
                     updateTimeMarkSelector();
+                    G.timeMarkSelector.selectedIndex = -1;
+                    G.timeMarkSelector.focus();
                 }
+                break;
+            case 'js' :
+                let dscr = document.getElementById("DynamicScript");
+                if (dscr != null) {
+                    dscr.parentNode.removeChild(dscr);
+                }
+                let script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "./data/" + file.name;
+                script.id = "DynamicScript";
+                document.body.appendChild(script);
+                script.onload = function () {
+                    G.transcriptField.value = jsonData["transcript"];
+                    G.timingList = jsonData["timing"];
+                    wavesurfer.load("./data/" + jsonData["sound"]);
+                    G.soundFileName = jsonData["sound"];
+                    updateTimeMarkSelector();
+                    G.timeMarkSelector.selectedIndex = -1;
+                    G.timeMarkSelector.focus();
+                };
                 break;
             default:
                 alert("This file type is not supported: " + file.name);
         }
-    },false);
+    },);
     G.timeMarkSelector.addEventListener("change", function(evt) {
         changeColour();
     });
@@ -137,6 +160,8 @@ window.addEventListener('DOMContentLoaded', function() {
             case "Delete" :
                 G.timingList.splice(idx+1, 1);
                 updateTimeMarkSelector();
+                G.timeMarkSelector.selectedIndex = -1;
+                G.timeMarkSelector.focus();
                 eraseNthCue(idx+1);
                 changeColour();
                 evt.preventDefault();
@@ -163,11 +188,30 @@ window.addEventListener('DOMContentLoaded', function() {
                 changeColour();
                 evt.preventDefault();
                 break;
+            case "Digit1" :
+                fixedTimeControl(1, evt.shiftKey);
+                evt.preventDefault();
+                break;
+            case "Digit2" :
+                fixedTimeControl(2, evt.shiftKey);
+                evt.preventDefault();
+                break;
+            case "Digit3" :
+                fixedTimeControl(3, evt.shiftKey);
+                evt.preventDefault();
+                break;
             default :
 //                console.log(evt.code);
         }
     });
- });
+});
+
+function fixedTimeControl(sec, isShift) {
+    let delta = (isShift) ? -sec : sec;
+    let gValue = Number(G.previousTimerField.value) + delta;
+    gValue = (gValue < 0) ? 0 : gValue;
+    G.previousTimerField.value = gValue.toFixed(2);
+}
 
 function changeColour() {
     let idx = G.timeMarkSelector.selectedIndex;
@@ -189,6 +233,7 @@ function tuningCue(idx, val) {
     }
     G.timingList[idx] = newVal;
     updateTimeMarkSelector();
+    G.timeMarkSelector.focus();
 }
 
 function getSubstringIndex(str, substring, nth) {
@@ -218,19 +263,21 @@ function updateTimeMarkSelector() {
 }
 
 function clicked() {
-    let content = G.transcriptField.value;
+    G.timeMarkSelector.selectedIndex = -1;
+    let content = G.transcriptField.value.replaceAll("🔺", "▴");;
     let length = content.length;
     let pos = G.transcriptField.selectionStart;
     let beforeStr = content.substr(0, pos);
-    let marksCount = (beforeStr.match(/▴/g) || []).length;
-//    let timeStamp = (Math.floor(wavesurfer.getCurrentTime() * 100.0) / 100.0);
+    let marksCount = (beforeStr.match(/[▴]/g) || []).length;
     let timeStamp = Number(G.previousTimerField.value);
     // check  n番目がより小さく、かつ、n+1番目がより大きい
     if ((G.timingList[marksCount] < timeStamp) && (timeStamp < G.timingList[marksCount+1])) {
         let afterStr = content.substr(pos, length);
-        G.transcriptField.value = beforeStr + "▴" + afterStr;
+        G.transcriptField.value = beforeStr + "🔺" + afterStr;
         G.timingList.splice(marksCount+1, 0, timeStamp);
         updateTimeMarkSelector();
+        G.timeMarkSelector.selectedIndex = marksCount;
+        G.timeMarkSelector.focus();
     } else {
         let segStart = (G.timingList[marksCount] == -1.0) ? "start-of-sound-source" : G.timingList[marksCount].toFixed(2);
         let segEnd = (G.timingList[marksCount+1] == 99999.0) ? "end-of-sound-source" : G.timingList[marksCount+1].toFixed(2);
@@ -238,21 +285,32 @@ function clicked() {
     }
 }
 
-function outputFile() {
-//  let path = document.getElementById("InputFile").value;
-//  path = path.replace(/.+?fakepath\\/, "");
-
+function createJSONstring() {
     let jsonData = {};
     jsonData["sound"] = G.soundFileName;
     jsonData["transcript"] = G.transcriptField.value.replaceAll("🔺", "▴");
     jsonData["timing"] = G.timingList;
+    return JSON.stringify(jsonData);
+}
 
+function outputFile() {
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-    let blob = new Blob([ bom, JSON.stringify(jsonData) ], { "type" : "text/plain" });
+    let blob = new Blob([ bom,  createJSONstring() ], { "type" : "text/plain" });
     if (window.navigator.msSaveBlob) { 
         window.navigator.msSaveBlob(blob, "timeStamped.json"); 
         window.navigator.msSaveOrOpenBlob(blob, "timeStamped.json"); 
     } else {
         G.fileOutput.href = window.URL.createObjectURL(blob);
+    }
+}
+
+function outputJSONJSFile() {
+    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    let blob = new Blob([ bom,  "jsonData = " + createJSONstring() + ";"], { "type" : "text/plain" });
+    if (window.navigator.msSaveBlob) { 
+        window.navigator.msSaveBlob(blob, "timeStamped.json.js"); 
+        window.navigator.msSaveOrOpenBlob(blob, "timeStamped.json.js"); 
+    } else {
+        G.jsonJsFileOutput.href = window.URL.createObjectURL(blob);
     }
 }

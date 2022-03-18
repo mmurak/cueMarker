@@ -8,6 +8,7 @@ class GlobalManager {
         this.zoomOutButton = document.getElementById("ZoomOutButton");
         this.speedSelector = document.getElementById("SpeedSelector");
         this.fileOutput = document.getElementById("FileOutput");
+        this.jsonJsFileOutput = document.getElementById("JSONJSFileOutput");
         this.timerField = document.getElementById("TimerField");
         this.previousTimerField = document.getElementById("PreviousTimerField");
         this.previousPlayButton = document.getElementById("PreviousPlayButton");
