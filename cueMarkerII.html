@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+  <head>
+    <title>Cue Marker Mk-II</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+    <link rel="shortcut icon" href="./redKiwiBird.png">
+    <script src="./scripts/wavesurfer.js"></script>
+  </head>
+  <body">
+
+    <form action="#" name="Player">
+      <input type="file" id="InputFileButton" onclick="this.value=null;" /><br/>
+      <input type="button" id="PlayButton" value="Play" onclick="playPause();"/>
+      <input type="button" id="ZoomInButton" value="Zoom In" onclick="zoomIn();"/>
+      <input type="button" id="ZoomOutButton" value="Zoom Out" disabled onclick="zoomOut();"/>
+      <select id="SpeedSelector" onchange="speedController(this.value);">
+        <option>0.25</option>
+        <option>0.50</option>
+        <option>0.75</option>
+        <option selected="true">1.00</option>
+        <option>1.25</option>
+        <option>1.50</option>
+        <option>1.75</option>
+        <option>2.00</option>
+      </select>
+    </form>
+
+    <div id="waveform" hidden></div>
+    <input id="TimerField" size="8" disabled style="text-align:right"/>
+    <form action="#" name="Time">
+        <textarea id="TranscriptField" style="height: 500px; font-family: monospace,monospace; font-size: 18pt;" cols="60" readonly onclick="clicked();"></textarea>
+        <select id="TimeMarkSelector" name="selector" size="15" style="width: 170px;height: 500px; font-size: 18pt;">
+        </select>
+    </form>
+    <br/>
+    <a id="JSONJSFileOutput" href="#" download="timeStamped.json.js" onclick="outputJSONJSFile();">JSON.JSファイル出力</a>
+
+<script src="./scripts/GlobalManagerII.js"></script>
+<script src="./scripts/CueMarkerII.js"></script>
+</script>
+</body>
+</html>

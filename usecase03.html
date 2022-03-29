@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+  <head>
+    <title>Usecase 003</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+    <link rel="shortcut icon" href="./cyanKiwiBird.png">
+    <script src="./scripts/wavesurfer.js"></script>
+    <style>
+        a:link, a:visited, a:hover, a:active {
+            color: black;
+            text-decoration: none;
+        }
+        #fixed {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100px;
+            z-index:100;
+            background-color: white;
+        }
+        #controls {
+            margin: 10px 10px 10px 10px;
+        }
+        #content {
+            position:absolute;
+            top:100px;
+            z-index: 50;
+        }
+    </style>
+  </head>
+  <body bgcolor="#dddddd">
+    <div id="fixed"><div id="controls">
+    <form action="#" name="Player">
+      <span>設問：</span>
+      <select id="QSelector" onchange="questionSelected(this);"></select>
+      <input type="button" id="PlayButton" value="再生" onclick="playPause();"/>
+      <span>再生速度：</span>
+      <select id="SpeedSelector" onchange="speedController(this.value);">
+        <option>0.25</option>
+        <option>0.50</option>
+        <option>0.75</option>
+        <option selected="true">1.00</option>
+        <option>1.25</option>
+        <option>1.50</option>
+        <option>1.75</option>
+        <option>2.00</option>
+      </select>
+      <input type="button" id="MarkButton" value="下線を引きたいところで、押し続けてください。"></input>
+    </form>
+    <br/>
+    <input type="button" id="HideShowButton" value="表示" onclick="toggleHideShow();"></input>
+    <input type="checkbox" id="RegulariseSelection" checked onchange="setTranscript()"></input>:単語境界で表示　
+    <input type="range" id="DelayControl" value="4.5" min="0.00" max="5.00" step="0.01" style="width: 300px;" oninput="paintColour();"></input>:遅延設定（既定値=<span id="DTime">0.50</span>秒）
+
+    <div id="waveform" hidden></div>
+    </div></div>
+    <div id="content">
+    <p id="DisplayField" style="font-size: 20pt; font-family: 'Times New Roman';" hidden></p>
+    </div>
+
+<script src="./data/directory003.js"></script>
+<script src="./scripts/GlobalManagerT003.js"></script>
+<script src="./scripts/Usecase03.js"></script>
+</script>
+</body>
+</html>
