@@ -10,17 +10,17 @@ let wavesurfer = WaveSurfer.create({
 });
 
 wavesurfer.on("play", function() {
-    G.playButton.value = "Pause";
+    G.playButton.value = "一時停止";
     G.speedSelector.disabled = true;
 });
 
 wavesurfer.on("pause", function() {
-    G.playButton.value = "Play";
+    G.playButton.value = "再生";
     G.speedSelector.disabled = false;
 });
 
 wavesurfer.on("finish", function() {
-    G.playButton.value = "Play";
+    G.playButton.value = "再生";
     G.speedSelector.disabled = false;
 });
 
@@ -28,7 +28,7 @@ wavesurfer.on("finish", function() {
 let timer = function() {
     G.timerField.value = (Math.floor(wavesurfer.getCurrentTime() * 100.0) / 100.0).toFixed(2);
     if (!wavesurfer.isPlaying()) {
-        G.playButton.value = "Play";
+        G.playButton.value = "再生";
     }
 };
 setInterval(timer, 10);
@@ -40,24 +40,6 @@ function playPause() {
     } else {
         wavesurfer.pause();
     }
-}
-
-// Called when zoom-in button is pushed.
-function zoomIn() {
-  G.zoomOutButton.disabled = false;
-  G.currentZoomFactor += G.zoomDelta;
-  wavesurfer.zoom(G.currentZoomFactor);
-}
-
-// Called when zoom-out button is pushed.
-function zoomOut() {
-  if (G.currentZoomFactor > G.minimumZoomFactor) {
-    G.currentZoomFactor -= G.zoomDelta;
-    wavesurfer.zoom(G.currentZoomFactor);
-    if (G.currentZoomFactor == G.minimumZoomFactor) {
-      G.zoomOutButton.disabled = true;
-    }
-  }
 }
 
 // Called when speed-controll selector is changed.
@@ -176,6 +158,13 @@ function loadTimeArray(interval) {
 }
 
 function changeColour() {
+    // added this logic because some policies were changed
+    if ((G.timeMarkSelector.selectedIndex == -1) ||
+        (G.timeMarkSelector[G.timeMarkSelector.selectedIndex].innerHTML.indexOf("▶") == -1)) {
+        G.transcriptField.value = G.transcriptField.value.replaceAll("🔺", "▴");
+        return;
+    }
+    // untill here.
     let tlIdx = 0;
     for (let i = G.timeMarkSelector.selectedIndex; i > -1; i--) {
         if (G.timeMarkSelector[i].innerHTML.indexOf("▶") != -1) {
@@ -233,9 +222,10 @@ function clicked() {
     }
     let timeStamp = getSelectedTime();
     if (searchRegisteredTime(timeStamp) != -1) {
+        G.timeMarkSelector.focus();
         return;
     }
-    let content = G.transcriptField.value.replaceAll("🔺", "▴");;
+    let content = G.transcriptField.value.replaceAll("🔺", "▴");
     let length = content.length;
     let pos = G.transcriptField.selectionStart;
     if ((content.substr(pos-1, 1) == "▴")||(content.substr(pos, 1) == "▴")||(content.substr(pos+1, 1) == "▴")) {

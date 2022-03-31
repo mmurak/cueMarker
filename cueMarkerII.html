@@ -11,9 +11,7 @@
 
     <form action="#" name="Player">
       <input type="file" id="InputFileButton" onclick="this.value=null;" /><br/>
-      <input type="button" id="PlayButton" value="Play" onclick="playPause();"/>
-      <input type="button" id="ZoomInButton" value="Zoom In" onclick="zoomIn();"/>
-      <input type="button" id="ZoomOutButton" value="Zoom Out" disabled onclick="zoomOut();"/>
+      <input type="button" id="PlayButton" value="再生" onclick="playPause();"/>
       <select id="SpeedSelector" onchange="speedController(this.value);">
         <option>0.25</option>
         <option>0.50</option>
@@ -24,17 +22,17 @@
         <option>1.75</option>
         <option>2.00</option>
       </select>
+      <input id="TimerField" size="8" disabled style="text-align:right"/>
     </form>
 
     <div id="waveform" hidden></div>
-    <input id="TimerField" size="8" disabled style="text-align:right"/>
     <form action="#" name="Time">
         <textarea id="TranscriptField" style="height: 500px; font-family: monospace,monospace; font-size: 18pt;" cols="60" readonly onclick="clicked();"></textarea>
         <select id="TimeMarkSelector" name="selector" size="15" style="width: 170px;height: 500px; font-size: 18pt;">
         </select>
     </form>
     <br/>
-    <a id="JSONJSFileOutput" href="#" download="timeStamped.json.js" onclick="outputJSONJSFile();">JSON.JSファイル出力</a>
+    <a id="JSONJSFileOutput" href="#" download="timeStamped.json.js" onclick="outputJSONJSFile();">.JSファイル出力</a>
 
 <script src="./scripts/GlobalManagerII.js"></script>
 <script src="./scripts/CueMarkerII.js"></script>
