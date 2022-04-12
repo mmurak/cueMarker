@@ -154,7 +154,10 @@ function paintColour() {
                 if ((wordStart[1] == null) || (wordEnd[1] == null)) return;
                 if ((startTime <= wordEnd[1]) && (wordStart[1] <= endTime)) {
                     for (let j = wordStart[0]; j <= wordEnd[0]; j++) {
-                        document.getElementById("sp" + j).style = "text-decoration: underline;text-decoration-color: red";
+                        let elemR = document.getElementById("sp" + j);
+                        if (elemR != null) {
+                            elemR.style = "text-decoration: underline;text-decoration-color: red";
+                        }
                     }
                 }
             });
