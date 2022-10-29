@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+  <head>
+    <title>Dictation Helper</title>
+    <link rel="shortcut icon" href="./redKiwiBird.png">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+    <script src="./scripts/wavesurfer.js"></script>
+    <style>
+    textarea {
+        width: 100%;
+        resize: vertical;
+        height: 500px;
+        font-family: Times New Roman;
+        font-size: 18pt;
+    }
+    .zoomer{
+        width: 10%;
+        background: #ccffcc;
+    }
+    .player{
+        width: 20%;
+        font-size: 150%;
+        background: #ccccff;
+    }
+    .stamper{
+        width: 20%;
+        font-size: 150%;
+        background: #ffcccc;
+    }
+    .speeder{
+        width: 60%;
+    }
+    </style>
+  </head>
+  <body">
+      Sound file: <input type="file" id="mediaFile"  /><br/>
+      <input type="button" id="zoomInButton" class="zoomer" value="Zoom In" onclick="zoomIn();"/>
+      <input type="button" id="zoomOutButton" class="zoomer" value="Zoom Out" disabled onclick="zoomOut();"/>
+      <input id="timerField" size="8" disabled style="text-align:right"/>
+      <br/>
+      <div id="waveform"></div>
+      <br/>
+      <input type="button" id="playButton" class="player" value="Press to Play" disabled/>
+      Speed:<input type="range" id="speedRange" class="speeder" value="100" min="10" max="200" step="1" oninput="speedControl();"/><span id="playSpeed">100</span>%
+      <br/>
+      <input type="button" id="stampButton" class="stamper" value="Stamp at 0.00" onclick="stampIt();"/>
+      <textarea id="textArea" onclick="clicker();"></textarea>
+      Script file: <input type="file" id="scriptFile"  /><br/>
+      <a id="fileOutput" href="#" download="output.txt" onclick="outputFile();">ファイル出力</a>
+
+<script type="text/javascript">
+
+// Globals
+class GlobalManager {
+    constructor() {
+        this.playButton = document.getElementById("playButton");
+        this.stampButton = document.getElementById("stampButton");
+        this.zoomInButton = document.getElementById("zoomInButton");
+        this.zoomOutButton = document.getElementById("zoomOutButton");
+        this.timerField = document.getElementById("timerField");
+        this.textArea = document.getElementById("textArea");
+        this.speedRange = document.getElementById("speedRange");
+        this.playSpeed = document.getElementById("playSpeed");
+        this.fileOutput = document.getElementById("fileOutput");
+        this.currentZoomFactor = 10;
+        this.minimumZoomFactor = 10;
+        this.zoomDelta = 5;
+        this.startPoint = 0.0;
+        this.nextCandidatePoint = 0.0;
+    }
+}
+
+const G = new GlobalManager();
+
+// Wavesurfer setup
+let wavesurfer = WaveSurfer.create({
+    container: '#waveform' ,
+    waveColor: '#6495ed',
+    progressColor: '#b03a2e',
+    backend: 'MediaElement'     // it is to change speed without affecting the pitch
+});
+
+wavesurfer.on("play", function() {
+    G.playButton.value = "Release to Stop";
+});
+
+wavesurfer.on("pause", function() {
+    changeButtonLabel();
+});
+
+wavesurfer.on("finish", function() {
+    changeButtonLabel();
+    G.peedWheel.disabled = false;
+    wavesurfer.seekTo(0);
+});
+
+function changeButtonLabel() {
+    G.playButton.value = "Play from " + getTime(G.startPoint) + " ";
+}
+
+// Stopwatch control
+let timer = function() {
+    let rawTime = wavesurfer.getCurrentTime();
+    G.timerField.value = getTime(rawTime);
+    G.stampButton.value = "Stamp at " + getTime(G.nextCandidatePoint) + " ";
+    G.nextCandidatePoint = rawTime;
+};
+setInterval(timer, 10);
+
+// File reader
+window.addEventListener('DOMContentLoaded', function() {
+    let obj1 = document.getElementById("mediaFile");
+    obj1.addEventListener("change",function(evt){
+        let file = evt.target.files[0];
+        wavesurfer.load(window.URL.createObjectURL(file));
+        G.startPoint = 0.0;
+        changeButtonLabel();
+        G.playButton.disabled = false;
+    },false);
+    let obj2 = document.getElementById("scriptFile");
+    obj2.addEventListener("change",function(evt){
+        let file = evt.target.files[0];
+        let reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = function () {
+            G.textArea.value = reader.result;
+        }
+    })
+});
+
+function outputFile() {
+    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    let blob = new Blob([ bom,  G.textArea.value ], { "type" : "text/plain" });
+    if (window.navigator.msSaveBlob) { 
+        window.navigator.msSaveBlob(blob, "timeStamped.json"); 
+        window.navigator.msSaveOrOpenBlob(blob, "timeStamped.json"); 
+    } else {
+        G.fileOutput.href = window.URL.createObjectURL(blob);
+    }
+}
+
+window.addEventListener('keydown', function(evt) {
+    if (evt.key == "Alt") {
+        if (evt.shiftKey) {
+            stampIt();
+            evt.preventDefault();
+        } else {
+            playStart();
+            evt.preventDefault();
+        }
+    }
+});
+
+window.addEventListener('keyup', function(evt) {
+    playStop();
+});
+
+G.playButton.addEventListener("mousedown", function(evt) {
+    playStart();
+});
+
+G.playButton.addEventListener("mouseup", function(evt) {
+    playStop();
+});
+
+G.playButton.addEventListener("touchstart", function(evt) {
+    playStart();
+});
+
+G.playButton.addEventListener("touchend", function(evt) {
+    playStop();
+});
+
+function playStart() {
+    wavesurfer.play(G.startPoint);
+}
+
+function playStop() {
+    wavesurfer.pause();
+    G.nextCandidatePoint = wavesurfer.getCurrentTime();
+}
+
+G.stampButton.addEventListener("mousedown", function(evt) {
+    stampIt();
+});
+
+function stampIt() {
+    G.startPoint = G.nextCandidatePoint;
+    changeButtonLabel();
+    let saveIt = textArea.selectionStart;
+    let stampVal = "[[" + getTime(G.startPoint) + "]]";
+    G.textArea.value = G.textArea.value.substring(0, saveIt) + stampVal + 
+            G.textArea.value.substring(G.textArea.selectionEnd);
+    saveIt += stampVal.length;
+    G.textArea.setSelectionRange(saveIt, saveIt);
+    G.textArea.focus();   // to make chrome happy.
+}
+
+function getTime(currentTime) {
+    let ct = Math.floor(currentTime * 100);
+    let hour = Math.floor(ct / 360000);
+    let minute = Math.floor(ct % 360000 / 6000);
+    let sec = Math.floor(ct % 6000 / 100);
+    let csec = Math.floor(ct % 100);
+    if (hour == 0) {
+        if (minute == 0) {
+            return sec + "." + ("00" + csec).slice(-2);
+        }
+        return minute + ":" + ("00" + sec).slice(-2) + "." + ("00" + csec).slice(-2);
+    }
+    return hour + ":" + ("00" + minute).slice(-2) + ":" + ("00" + sec).slice(-2) + "." + ("00" + csec).slice(-2);
+}
+
+function stringTimeToSec(str) {
+    let parts = str.split(/:/);
+    let factor = 1;
+    let val = 0;
+    for (let i = parts.length - 1; i >= 0; i--) {
+        val += factor * parts[i];
+        factor *= 60;
+    }
+    return val;
+}
+
+function clicker() {
+    let dat = G.textArea.value;
+    let pt = G.textArea.selectionStart;
+
+    let leftValue = dat.substring(0, pt);
+    let rightValue = dat.substring(pt);
+    let a = leftValue.lastIndexOf("[[");
+    let b = leftValue.lastIndexOf("]]");
+    if ((a == -1) || (b > a)) {
+        return;
+    }
+    let timeValue = leftValue.substring(a+2) + rightValue.substring(0, rightValue.indexOf("]]"));
+    G.startPoint = stringTimeToSec(timeValue);
+    wavesurfer.play(G.startPoint, G.startPoint+0.004);
+}
+
+// Called when zoom-in button is pushed.
+function zoomIn() {
+    G.zoomOutButton.disabled = false;
+    G.currentZoomFactor += G.zoomDelta;
+    wavesurfer.zoom(G.currentZoomFactor);
+}
+
+// Called when zoom-out button is pushed.
+function zoomOut() {
+    if (G.currentZoomFactor > G.minimumZoomFactor) {
+        G.currentZoomFactor -= G.zoomDelta;
+        wavesurfer.zoom(G.currentZoomFactor);
+        if (G.currentZoomFactor == G.minimumZoomFactor) {
+            G.zoomOutButton.disabled = true;
+        }
+    }
+}
+
+// Called when speed-slider is changed.
+function speedControl() {
+    wavesurfer.setPlaybackRate(G.speedRange.value / 100.0);
+    G.playSpeed.innerHTML = G.speedRange.value;
+}
+
+
+</script>
+</body>
+</html>
