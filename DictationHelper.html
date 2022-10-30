@@ -162,6 +162,7 @@ G.playButton.addEventListener("mousedown", function(evt) {
 
 G.playButton.addEventListener("mouseup", function(evt) {
     playStop();
+    G.textArea.focus();
 });
 
 G.playButton.addEventListener("touchstart", function(evt) {
@@ -181,8 +182,9 @@ function playStop() {
     G.nextCandidatePoint = wavesurfer.getCurrentTime();
 }
 
-G.stampButton.addEventListener("mousedown", function(evt) {
+G.stampButton.addEventListener("click", function(evt) {
     stampIt();
+    G.textArea.focus();
 });
 
 function stampIt() {
