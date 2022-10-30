@@ -11,7 +11,7 @@
     textarea {
         width: 100%;
         resize: vertical;
-        height: 500px;
+        height: 60vh;
         font-family: Times New Roman;
         font-size: 18pt;
     }
@@ -47,11 +47,14 @@
         .stamper{
             width: 100%;
         }
+        textarea{
+            height: 40vh;
+        }
     }
     </style>
   </head>
   <body">
-      <div class="fileSection">Sound file: <input type="file" id="mediaFile"  /></div><br/>
+      <div class="fileSection">Sound file: <input type="file" id="mediaFile" accept=".mp3,.webm,.mp4,.mkv,.wav,.txt" /></div><br/>
       <input type="button" id="zoomInButton" class="zoomer" value="Zoom In" onclick="zoomIn();"/>
       <input type="button" id="zoomOutButton" class="zoomer" value="Zoom Out" disabled onclick="zoomOut();"/>
       <input id="timerField" size="8" disabled style="text-align:right"/>
@@ -62,8 +65,7 @@
       <br/>
       <input type="button" id="stampButton" class="stamper" value="Stamp at 0.00"/>
       <textarea id="textArea" onclick="clicker();"></textarea>
-      Script file: <input type="file" id="scriptFile"  /><br/>
-      <a id="fileOutput" href="#" download="output.txt" onclick="outputFile();">ファイル出力</a>
+      <a id="fileOutput" href="#" download="output.txt" onclick="outputFile();">Output .txt file</a>
 
 <script type="text/javascript">
 
@@ -131,20 +133,21 @@ window.addEventListener('DOMContentLoaded', function() {
     let obj1 = document.getElementById("mediaFile");
     obj1.addEventListener("change",function(evt){
         let file = evt.target.files[0];
-        wavesurfer.load(window.URL.createObjectURL(file));
-        G.startPoint = 0.0;
-        changeButtonLabel();
-        G.playButton.disabled = false;
-    },false);
-    let obj2 = document.getElementById("scriptFile");
-    obj2.addEventListener("change",function(evt){
-        let file = evt.target.files[0];
-        let reader = new FileReader();
-        reader.readAsText(file);
-        reader.onload = function () {
-            G.textArea.value = reader.result;
+        switch (file.name.split(".").pop()) {
+        case "txt" :
+            let reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function () {
+                G.textArea.value = reader.result;
+            }
+            break;
+        default:
+            wavesurfer.load(window.URL.createObjectURL(file));
+            G.startPoint = 0.0;
+            changeButtonLabel();
+            G.playButton.disabled = false;
         }
-    })
+    },false);
 });
 
 function outputFile() {
@@ -254,7 +257,9 @@ function clicker() {
     if ((a == -1) || (b > a)) {
         return;
     }
-    let timeValue = leftValue.substring(a+2) + rightValue.substring(0, rightValue.indexOf("]]"));
+    let c = rightValue.indexOf("]]");
+    let timeValue = leftValue.substring(a+2) + rightValue.substring(0, c);
+    G.textArea.selectionStart = pt + c + 2;
     G.startPoint = stringTimeToSec(timeValue);
     wavesurfer.play(G.startPoint, G.startPoint+0.004);
 }
