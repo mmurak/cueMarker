@@ -163,8 +163,8 @@ function outputFile() {
 
 window.addEventListener('keydown', function(evt) {
     if (evt.key == "Alt") {
-        if (evt.shiftKey) {
-            stampIt();
+        if (evt.shiftKey||evt.ctrlKey) {
+            stampIt(evt);
             evt.preventDefault();
         } else {
             playStart();
@@ -204,20 +204,21 @@ function playStop() {
 }
 
 G.stampButton.addEventListener("click", function(evt) {
-    stampIt();
-    G.textArea.focus();
+    stampIt(evt);
 });
 
-function stampIt() {
+function stampIt(evt) {
     G.startPoint = G.nextCandidatePoint;
     changeButtonLabel();
-    let saveIt = textArea.selectionStart;
-    let stampVal = "[[" + getTime(G.startPoint) + "]]";
-    G.textArea.value = G.textArea.value.substring(0, saveIt) + stampVal + 
-            G.textArea.value.substring(G.textArea.selectionEnd);
-    saveIt += stampVal.length;
-    G.textArea.setSelectionRange(saveIt, saveIt);
-    G.textArea.focus();   // to make chrome happy.
+    if (!evt.ctrlKey) {
+        let saveIt = textArea.selectionStart;
+        let stampVal = "[[" + getTime(G.startPoint) + "]]";
+        G.textArea.value = G.textArea.value.substring(0, saveIt) + stampVal + 
+                G.textArea.value.substring(G.textArea.selectionEnd);
+        saveIt += stampVal.length;
+        G.textArea.setSelectionRange(saveIt, saveIt);
+        G.textArea.focus();   // to make chrome happy.
+    }
 }
 
 function getTime(currentTime) {
