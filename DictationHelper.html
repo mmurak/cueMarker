@@ -5,6 +5,7 @@
     <title>Dictation Helper</title>
     <link rel="shortcut icon" href="./redKiwiBird.png">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <script src="./scripts/wavesurfer.js"></script>
     <style>
     textarea {
@@ -31,16 +32,31 @@
     .speeder{
         width: 60%;
     }
+    @media screen and (max-width: 959px) {
+        .fileSection{
+            font-size: 150%;
+        }
+        .zoomer{
+            width: 30%;
+            font-size: 150%;
+        }
+        .player{
+            width: 100%;
+            padding: 30px 10px 30px 10px;
+        }
+        .stamper{
+            width: 100%;
+        }
+    }
     </style>
   </head>
   <body">
-      Sound file: <input type="file" id="mediaFile"  /><br/>
+      <div class="fileSection">Sound file: <input type="file" id="mediaFile"  /></div><br/>
       <input type="button" id="zoomInButton" class="zoomer" value="Zoom In" onclick="zoomIn();"/>
       <input type="button" id="zoomOutButton" class="zoomer" value="Zoom Out" disabled onclick="zoomOut();"/>
       <input id="timerField" size="8" disabled style="text-align:right"/>
       <br/>
       <div id="waveform"></div>
-      <br/>
       <input type="button" id="playButton" class="player" value="Press to Play" disabled/>
       Speed:<input type="range" id="speedRange" class="speeder" value="100" min="10" max="200" step="1" oninput="speedControl();"/><span id="playSpeed">100</span>%
       <br/>
@@ -94,6 +110,8 @@ wavesurfer.on("finish", function() {
     G.peedWheel.disabled = false;
     wavesurfer.seekTo(0);
 });
+
+//wavesurfer.setHeight(50);
 
 function changeButtonLabel() {
     G.playButton.value = "Play from " + getTime(G.startPoint) + " ";
