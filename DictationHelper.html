@@ -61,7 +61,19 @@
       <br/>
       <div id="waveform"></div>
       <input type="button" id="playButton" class="player" value="Press to Play" disabled/>
-      Speed:<input type="range" id="speedRange" class="speeder" value="100" min="10" max="200" step="1" oninput="speedControl();"/><span id="playSpeed">100</span>%
+      Speed:<input type="range" id="speedRange" value="44" class="speeder" list="myTickList" oninput="speedControl();"/>
+      <datalist id="myTickList">
+      <option value="11">
+      <option value="22">
+      <option value="33">
+      <option value="44">
+      <option value="55">
+      <option value="66">
+      <option value="77">
+      <option value="88">
+      <option value="100">
+      </datalist>
+      <span id="playSpeed">100</span>%
       <br/>
       <input type="button" id="stampButton" class="stamper" value="Stamp at 0.00"/>
       <textarea id="textArea" onclick="clicker();"></textarea>
@@ -287,8 +299,12 @@ function zoomOut() {
 
 // Called when speed-slider is changed.
 function speedControl() {
-    wavesurfer.setPlaybackRate(G.speedRange.value / 100.0);
-    G.playSpeed.innerHTML = G.speedRange.value;
+    // 0->0.2
+    //44->1.0
+    //100->2.0
+    let sval = G.speedRange.value / 55.0 + 0.2;
+    wavesurfer.setPlaybackRate(sval);
+    G.playSpeed.innerHTML = Math.floor(sval * 100);
 }
 
 
