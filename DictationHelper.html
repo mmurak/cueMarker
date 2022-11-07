@@ -73,7 +73,15 @@
       <br/>
       <input type="button" id="stampButton" class="stamper" value="Stamp at 0.00"/>
       <textarea id="textArea" onclick="clicker();"></textarea>
-      <a id="fileOutput" href="#" download="output.txt" onclick="outputFile();">Output .txt file</a>
+      <div>
+        <div style="display:inline-block;">
+            <a id="fileOutput" href="#" download="output.txt" onclick="outputFile();">Output .txt file</a>
+        </div>
+        <div style="display:inline-block; float: right;">
+            <a href="#" onclick="setCTTM();">Virtual stamp</a>　
+            <a href="#" onclick="setNoL();">★</a>
+        </div>
+      </div>
 
 <script type="text/javascript">
 
@@ -325,15 +333,23 @@ function zoomOut() {
 
 // Called when speed-slider is changed.
 function speedControl() {
-    // 0->0.2
-    //44->1.0
-    //100->2.0
     let sval = G.speedRange.value / 55.0 + 0.2;
     wavesurfer.setPlaybackRate(sval);
     G.playSpeed.innerHTML = Math.floor(sval * 100);
 }
 
+function setNoL() {
+    let newNoL = window.prompt("Enter number of lines for text-area:", G.textArea.rows);
+    if ((newNoL == null) || (!newNoL.match(/^[0-9]+$/))) {
+        return;
+    }
+    G.textArea.rows = newNoL;
+}
 
+function setCTTM() {
+    G.startPoint = G.nextCandidatePoint;
+    changeButtonLabel();
+}
 </script>
 </body>
 </html>
