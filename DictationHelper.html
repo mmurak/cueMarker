@@ -19,17 +19,17 @@
         background: #ccffcc;
     }
     .player{
-        width: 20%;
+        width: 25%;
         font-size: 150%;
         background: #ccccff;
     }
     .stamper{
-        width: 20%;
+        width: 25%;
         font-size: 150%;
         background: #ffcccc;
     }
     .speeder{
-        width: 60%;
+        width: 35%;
     }
     @media screen and (max-width: 959px) {
         .fileSection{
@@ -40,11 +40,11 @@
             font-size: 150%;
         }
         .player{
-            width: 100%;
+            width: 50%;
             padding: 30px 10px 30px 10px;
         }
         .stamper{
-            width: 100%;
+            width: 50%;
         }
     }
     </style>
@@ -56,7 +56,8 @@
       <input id="timerField" size="8" disabled style="text-align:right"/>
       <br/>
       <div id="waveform"></div>
-      <input type="button" id="playButton" class="player" value="Press to Play" disabled/>
+      <input type="button" id="playButton" class="player" value="Press Player" disabled/>
+      <input type="button" id="playButton2" class="player" value="Click&Click Player" disabled/>
       Speed:<input type="range" id="speedRange" value="44" class="speeder" list="myTickList" oninput="speedControl();"/>
       <datalist id="myTickList">
       <option value="11">
@@ -72,13 +73,13 @@
       <span id="playSpeed">100</span>%
       <br/>
       <input type="button" id="stampButton" class="stamper" value="Stamp at 0.00"/>
+      <input type="button" id="pointMover" class="stamper" value="← Virtual stamp"/>
       <textarea id="textArea" onclick="clicker();"></textarea>
       <div>
         <div style="display:inline-block;">
             <a id="fileOutput" href="#" download="output.txt" onclick="outputFile();">Output .txt file</a>
         </div>
         <div style="display:inline-block; float: right;">
-            <a href="#" onclick="setCTTM();">Virtual stamp</a>　
             <a href="#" onclick="setNoL();">★</a>
         </div>
       </div>
@@ -89,7 +90,9 @@
 class GlobalManager {
     constructor() {
         this.playButton = document.getElementById("playButton");
+        this.playButton2 = document.getElementById("playButton2");
         this.stampButton = document.getElementById("stampButton");
+        this.pointMover = document.getElementById("pointMover");
         this.zoomInButton = document.getElementById("zoomInButton");
         this.zoomOutButton = document.getElementById("zoomOutButton");
         this.timerField = document.getElementById("timerField");
@@ -147,13 +150,16 @@ let wavesurfer = WaveSurfer.create({
 
 wavesurfer.on("play", function() {
     G.playButton.value = "Release to Stop";
+    G.playButton2.value = "Click to Stop";
 });
 
 wavesurfer.on("pause", function() {
+    playButton.disabled = false;
     changeButtonLabel();
 });
 
 wavesurfer.on("finish", function() {
+    playButton.disabled = false;
     changeButtonLabel();
     wavesurfer.seekTo(0);
 });
@@ -162,6 +168,7 @@ wavesurfer.on("finish", function() {
 
 function changeButtonLabel() {
     G.playButton.value = "Play from " + getTime(G.startPoint) + " ";
+    G.playButton2.value = "Play from " + getTime(wavesurfer.getCurrentTime()) + " ";
 }
 
 // Stopwatch control
@@ -191,6 +198,7 @@ window.addEventListener('DOMContentLoaded', function() {
             G.startPoint = 0.0;
             changeButtonLabel();
             G.playButton.disabled = false;
+            G.playButton2.disabled = false;
         }
     },false);
 });
@@ -208,30 +216,40 @@ function outputFile() {
 
 window.addEventListener('keydown', function(evt) {
     if (evt.key == "Alt") {
-        if (evt.shiftKey) {
-            stampIt(evt);
-            evt.preventDefault();
-        } else {
-            playStart();
-            evt.preventDefault();
+        if (evt.code == "AltLeft") {
+            if (evt.shiftKey) {
+                stampIt(evt);
+            } else {
+                playStart();
+            }
+        } else {    // AltRight
+            if (evt.shiftKey) {
+                setCTTM();
+            } else {
+                if (wavesurfer.isPlaying()) {
+                    wavesurfer.pause();
+                } else {
+                    wavesurfer.play();
+                }
+            }
         }
+        evt.preventDefault();
     }
 });
 
 window.addEventListener('keyup', function(evt) {
-    playStop();
-});
-
-G.playButton.addEventListener("mousedown", function(evt) {
-    if (evt.shiftKey) {
-        G.startPoint = G.nextCandidatePoint;
-        changeButtonLabel();
-    } else {
-        playStart();
+    if (evt.code == "AltLeft") {
+        playStop();
     }
 });
 
+G.playButton.addEventListener("mousedown", function(evt) {
+    playButton2.disabled = true;
+    playStart();
+});
+
 G.playButton.addEventListener("mouseup", function(evt) {
+    playButton2.disabled = false;
     playStop();
     G.textArea.focus();
 });
@@ -242,6 +260,19 @@ G.playButton.addEventListener("touchstart", function(evt) {
 
 G.playButton.addEventListener("touchend", function(evt) {
     playStop();
+});
+
+G.playButton2.addEventListener("click", function(evt) {
+    if (wavesurfer.isPlaying()) {
+        wavesurfer.pause();
+    } else {
+        playButton.disabled = true;
+        wavesurfer.play();
+    }
+});
+
+G.pointMover.addEventListener("click", function(evt) {
+    setCTTM();
 });
 
 function playStart() {
