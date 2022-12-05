@@ -168,7 +168,6 @@ wavesurfer.on("finish", function() {
 
 function changeButtonLabel() {
     G.playButton.value = "Play from " + getTime(G.startPoint) + " ";
-    G.playButton2.value = "Play from " + getTime(wavesurfer.getCurrentTime()) + " ";
 }
 
 // Stopwatch control
@@ -176,6 +175,9 @@ let timer = function() {
     let rawTime = wavesurfer.getCurrentTime();
     G.timerField.value = getTime(rawTime);
     G.stampButton.value = "Stamp at " + getTime(G.nextCandidatePoint) + " ";
+    if (!wavesurfer.isPlaying()) {
+        G.playButton2.value = "Play from " + getTime(wavesurfer.getCurrentTime()) + " ";
+    }
     G.nextCandidatePoint = rawTime;
 };
 setInterval(timer, 10);
