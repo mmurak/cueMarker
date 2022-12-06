@@ -72,8 +72,8 @@
       </datalist>
       <span id="playSpeed">100</span>%
       <br/>
-      <input type="button" id="stampButton" class="stamper" value="Stamp at 0.00"/>
-      <input type="button" id="pointMover" class="stamper" value="<= Virtual stamp"/>
+      <input type="button" id="stampButton" class="stamper" value="↓ Stamp at 0.00"/>
+      <input type="button" id="pointMover" class="stamper" value="← Virtual stamp"/>
       <textarea id="textArea" onclick="clicker();"></textarea>
       <div>
         <div style="display:inline-block;">
@@ -174,7 +174,7 @@ function changeButtonLabel() {
 let timer = function() {
     let rawTime = wavesurfer.getCurrentTime();
     G.timerField.value = getTime(rawTime);
-    G.stampButton.value = "Stamp at " + getTime(G.nextCandidatePoint) + " ";
+    G.stampButton.value = "↓ Stamp at " + getTime(G.nextCandidatePoint) + " ";
     if (!wavesurfer.isPlaying()) {
         G.playButton2.value = "Play from " + getTime(wavesurfer.getCurrentTime()) + " ";
     }
