@@ -110,14 +110,6 @@ class GlobalManager {
 
 const G = new GlobalManager();
 
-history.pushState(null, null, null);
-window.addEventListener("popstate", function(evt) {
-    if (!evt.originalEvent.state) {
-        history.pushState(null, null, null);
-        return;
-    }
-});
-
 G.textArea.rows = 10;
 initParm();
 
@@ -235,6 +227,9 @@ window.addEventListener('keydown', function(evt) {
                 }
             }
         }
+        evt.preventDefault();
+    } else if ((evt.key >= "1") && (evt.key <= "9") && evt.ctrlKey) {
+        wavesurfer.skipBackward(evt.key);
         evt.preventDefault();
     }
 });
