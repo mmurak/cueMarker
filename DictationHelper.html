@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
   <head>
-    <title>Dictation Helper Ver. 1.03</title>
+    <title>Dictation Helper Ver. 1.06</title>
     <link rel="shortcut icon" href="./redKiwiBird.png">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
@@ -75,11 +75,17 @@
       <input type="button" id="stampButton" class="stamper" value="↓ Stamp at 0.00"/>
       <input type="button" id="pointMover" class="stamper" value="← Virtual stamp"/>
       <textarea id="textArea" onclick="clicker();"></textarea>
-      <div>
-        <div style="display:inline-block;">
+      <div style="display: flex;justify-content: space-between;">
+        <div>
             <a id="fileOutput" href="#" download="output.txt" onclick="outputFile();">Output .txt file</a>
         </div>
-        <div style="display:inline-block; float: right;">
+        <div>
+            Rewind (sec.): 
+            <a id="rew10" href="#" onclick="rewind(10);">&lt;&lt;10</a>&nbsp;
+            <a id="rew05" href="#" onclick="rewind(5);">&lt;&lt;5</a>&nbsp;
+            <a id="rew01" href="#" onclick="rewind(1);">&lt;&lt;1</a>
+        </div>
+        <div>
             <a href="#" onclick="setNoL();">★</a>
         </div>
       </div>
@@ -233,6 +239,10 @@ window.addEventListener('keydown', function(evt) {
         evt.preventDefault();
     }
 });
+
+function rewind(sec) {
+    wavesurfer.skipBackward(sec);
+}
 
 window.addEventListener('keyup', function(evt) {
     if (evt.code == "AltLeft") {
