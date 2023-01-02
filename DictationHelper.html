@@ -50,6 +50,7 @@
     </style>
   </head>
   <body">
+  <div id="controls">
       <div class="fileSection">Sound/Script file: <input type="file" id="mediaFile" accept=".mp3,.webm,.mp4,.mkv,.wav,.txt" /></div><br/>
       <input type="button" id="zoomInButton" class="zoomer" value="Zoom In" onclick="zoomIn();"/>
       <input type="button" id="zoomOutButton" class="zoomer" value="Zoom Out" disabled onclick="zoomOut();"/>
@@ -74,6 +75,7 @@
       <br/>
       <input type="button" id="stampButton" class="stamper" value="↓ Stamp at 0.00"/>
       <input type="button" id="pointMover" class="stamper" value="← Virtual stamp"/>
+      </div>
       <textarea id="textArea" onclick="clicker();"></textarea>
       <div style="display: flex;justify-content: space-between;">
         <div>
@@ -86,7 +88,7 @@
             <a id="rew01" href="#" onclick="rewind(1);">&lt;&lt;1</a>
         </div>
         <div>
-            <a href="#" onclick="setNoL();">★</a>
+            ★
         </div>
       </div>
 
@@ -102,6 +104,7 @@ class GlobalManager {
         this.zoomInButton = document.getElementById("zoomInButton");
         this.zoomOutButton = document.getElementById("zoomOutButton");
         this.timerField = document.getElementById("timerField");
+        this.controls = document.getElementById("controls");
         this.textArea = document.getElementById("textArea");
         this.speedRange = document.getElementById("speedRange");
         this.playSpeed = document.getElementById("playSpeed");
@@ -116,25 +119,16 @@ class GlobalManager {
 
 const G = new GlobalManager();
 
-G.textArea.rows = 10;
-initParm();
 
-function initParm() {
-    const urlParm = location.search.substring(1);
-    if (urlParm != "") {
-        const args = urlParm.split("&");
-        for (let i = 0; i < args.length; i++) {
-            checkAndModify(args[i]);
-        }
-    }
-}
-function checkAndModify(parm) {
-    const parmPair = parm.split("=");
-    if (typeof parmPair[1] !== "undefined") {
-        if (parmPair[0].toUpperCase() == "L") {
-            G.textArea.rows = Number(parmPair[1]);
-        }
-    }
+window.addEventListener("resize", (evt) => {
+    resize();
+});
+window.addEventListener("load", (evt) => {
+    resize();
+});
+
+function resize() {
+    G.textArea.style = "height: " + (window.innerHeight - G.controls.getBoundingClientRect().height - 60) + "px;";
 }
 
 
@@ -374,14 +368,6 @@ function speedControl() {
     let sval = G.speedRange.value / 55.0 + 0.2;
     wavesurfer.setPlaybackRate(sval);
     G.playSpeed.innerHTML = Math.floor(sval * 100);
-}
-
-function setNoL() {
-    let newNoL = window.prompt("Enter number of lines for text-area:", G.textArea.rows);
-    if ((newNoL == null) || (!newNoL.match(/^[0-9]+$/))) {
-        return;
-    }
-    G.textArea.rows = newNoL;
 }
 
 function setCTTM() {
