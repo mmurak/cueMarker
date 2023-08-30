@@ -213,6 +213,7 @@ function playStop() {
 
 function stampIt(evt) {
     G.startPoint = G.nextCandidatePoint;
+    G.playButton.value = "Press Play from " + getTime(G.startPoint) + " ";
 //    updateButtonLabel();
     let saveIt = textArea.selectionStart;
     let stampVal = "[[" + getTime(G.startPoint) + "]]";
@@ -292,6 +293,7 @@ function speedChange(obj) {
 
 function setCTTM() {
     G.startPoint = G.nextCandidatePoint;
+    G.playButton.value = "Press Play from " + getTime(G.startPoint) + " ";
 //    updateButtonLabel();
 }
 
