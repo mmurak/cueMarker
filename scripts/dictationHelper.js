@@ -167,8 +167,10 @@ function updateButtonLabel() {
 }
 
 function updateOperationButton() {
-    G.stampButton.value = "Set head & log @" + getTime(G.nextCandidatePoint) + " ";
-    G.pointMover.value = "Set head @" + getTime(G.nextCandidatePoint) + " ";
+    G.stampButton.value = "Set head & log";
+    G.pointMover.value = "Set head";
+//    G.stampButton.value = "Set head & log @" + getTime(G.nextCandidatePoint) + " ";
+//    G.pointMover.value = "Set head @" + getTime(G.nextCandidatePoint) + " ";
 }
 
 
@@ -211,7 +213,7 @@ function playStop() {
 
 function stampIt(evt) {
     G.startPoint = G.nextCandidatePoint;
-    updateButtonLabel();
+//    updateButtonLabel();
     let saveIt = textArea.selectionStart;
     let stampVal = "[[" + getTime(G.startPoint) + "]]";
     G.textArea.value = G.textArea.value.substring(0, saveIt) + stampVal + 
@@ -290,7 +292,7 @@ function speedChange(obj) {
 
 function setCTTM() {
     G.startPoint = G.nextCandidatePoint;
-    updateButtonLabel();
+//    updateButtonLabel();
 }
 
 /*
