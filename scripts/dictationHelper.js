@@ -24,11 +24,11 @@ class GlobalManager {
 }
 
 const G = new GlobalManager();
-updateOperationButton();
+resetOperationButton();
 
 /*
  * Events setup
-*/
+ */
 window.addEventListener("resize", (evt) => {
     resize();
 });
@@ -44,6 +44,7 @@ function resize() {
 //    Press control
 G.playButton.addEventListener("mousedown", function(evt) {
     playButton2.disabled = true;
+    resetOperationButton();
     playStart();
 });
 
@@ -123,7 +124,7 @@ G.waveformBase.addEventListener("click", function() {
     setTimeout(() => {
         G.nextCandidatePoint = wavesurfer.getCurrentTime();
         updateButtonLabel();
-        updateOperationButton();
+//        updateOperationButton();
     }, 100);
 });
 
@@ -164,13 +165,17 @@ wavesurfer.on("finish", function() {
 function updateButtonLabel() {
     G.playButton.value = "Press Play from " + getTime(G.startPoint) + " ";
     G.playButton2.value = "Toggle Play from " + getTime(wavesurfer.getCurrentTime()) + " ";
+    updateOperationButton();
+}
+
+function resetOperationButton() {
+    G.stampButton.value = "Set head & log";
+    G.pointMover.value = "Set head";
 }
 
 function updateOperationButton() {
-    G.stampButton.value = "Set head & log";
-    G.pointMover.value = "Set head";
-//    G.stampButton.value = "Set head & log @" + getTime(G.nextCandidatePoint) + " ";
-//    G.pointMover.value = "Set head @" + getTime(G.nextCandidatePoint) + " ";
+    G.stampButton.value = "Set head to " + getTime(G.nextCandidatePoint) + " & log";
+    G.pointMover.value = "Set head to " + getTime(G.nextCandidatePoint) + " ";
 }
 
 
@@ -199,7 +204,7 @@ function rewind(sec) {
         G.nextCandidatePoint = 0.0;
     }
     updateButtonLabel();
-    updateOperationButton();
+//    updateOperationButton();
 }
 
 function playStart() {
