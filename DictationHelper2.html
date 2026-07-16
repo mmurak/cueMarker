@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+    <head>
+        <title>Dictation Helper Ver. 2.02</title>
+        <link rel="shortcut icon" href="./CyanKiwiBird.png">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+        <script src="./scripts/wavesurfer.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body">
+        <div id="controls">
+            <div class="fileSection">
+                <label for="mediaFile" class="fileInput">
+                    Open Sound/Script file
+                </label>
+                <input type="file" id="mediaFile" accept=".mp3,.webm,.mp4,.mkv,.wav,.m4a,.txt,.srt" />
+                <label id="filename"></label>
+            </div>
+            <div id="zoomerBase">
+                <input type="button" id="zoomInButton" class="zoomer" value="Zoom In" onclick="zoomIn();"/>
+                <input type="button" id="zoomOutButton" class="zoomer" value="Zoom Out" disabled onclick="zoomOut();"/>
+                <select id="selector" onchange="speedChange(this);">
+                    <option value="0.2">×0.2</option>
+                    <option value="0.4">×0.4</option>
+                    <option value="0.6">×0.6</option>
+                    <option value="0.8">×0.8</option>
+                    <option value="1.0" selected>×1.0</option>
+                    <option value="1.2">×1.2</option>
+                    <option value="1.4">×1.4</option>
+                    <option value="1.6">×1.6</option>
+                    <option value="1.8">×1.8</option>
+                    <option value="2.0">×2.0</option>
+                    <option value="2.2">×2.2</option>
+                    <option value="2.4">×2.4</option>
+                    <option value="2.6">×2.6</option>
+                    <option value="2.8">×2.8</option>
+                    <option value="3.0">×3.0</option>
+                </select>
+                <input id="timerField" size="8" disabled hidden style="text-align:right"/>
+            </div>
+            <div id="waveformBase">
+                <div id="waveform"></div>
+            </div>
+            <div id="playerBase">
+                <input type="button" id="playButton" class="player" value="Press Player" disabled/>
+                <input type="button" id="playButton2" class="player" value="Play/Pause" disabled/>
+                <div style="margin: 5px 0 0 0">
+                    <label for="rewinder">Rewind (sec.)</label>
+                    <input type="button" class="rewind" value="<< 10" onclick="rewind(10);"/>
+                    <input type="button" class="rewind" value="<< 5" onclick="rewind(15);"/>
+                    <input type="button" class="rewind" value="<< 1" onclick="rewind(1);"/>
+                </div>
+                <div style="margin: 5px 0 5px 0">
+                    <input type="button" id="stampButton" class="stamper" value=""/>
+                    <input type="button" id="pointMover" class="stamper" value=""/>
+                </div>
+            </div>
+        </div>
+        <div id="scriptArea">
+            <textarea id="textArea" onclick="clicker();"></textarea>
+            <div style="display: flex;justify-content: space-between;">
+                <div>
+                    <input type="button" value="Save script file" onclick="outputFile();"/>
+                </div>
+                <div>
+                    ★
+                </div>
+            </div>
+        </div>
+
+        <script src="./scripts/dictationHelper2.js"></script>
+
+    </body>
+</html>
